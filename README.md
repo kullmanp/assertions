@@ -40,3 +40,41 @@ assertThat(contactService.getContacts(), hasItem(new Contact("Maria", "Muster"))
 - Looks more or less like the natural language specification of the test
 - Tests only what we want (and not some technical stuff like number of elements)
 
+## Using hamcrest
+
+## Writing a hamcrest matcher
+
+A matcher does two things:
+- actually matching a value (say whether the value matches)
+- describe what went wrong when a value does not match
+
+
+## Kinds of matches - different libraries
+
+- Hamcrest 
+- AssertJ
+- Mockito 
+
+### Interop between matcher libraries
+- AssertJ can use hamcrest matcher with `matching(<hamcrest-matcher>)`
+- Mockito supports hamcrest matchers as argument matchers with `argThat(<hamcres-matcher>)`
+- Junit 4 supports hamcrest directly (shipped with junit), can use AssertJ additionally
+- Junit 5 supports nothing directly. Both hamcrest and AssertJ are suitable.
+ 
+
+
+## TDD
+
+Expressive tests make failures clear. Extend the TDD cycle:
+- Write failing test
+- Make diagnostics clear
+- Make the test pass
+- Refactor
+
+
+## Sources
+- Growing Object-Oriented Software, Guided by Tests, by Nat Pryce; Steve Freeman
+Published by Addison-Wesley Professional, 2009
+- https://assertj.github.io/doc/
+- http://hamcrest.org/
+- https://site.mockito.org/
