@@ -60,8 +60,42 @@ The really cool thing about matchers is that they are composable:
 - `allOf` -- makes a logical and of two matchers, eg `assertThat(aSring, allOf(startsWith("<"), endsWith(">")))`
 - `hasItem` again -- the item to be found can be a matcher itself, eg `assertThat(listOfStrings, hasItem(hasLength(11)))` 
 
+Matchers can describe what they expect to match and why the given input didn't match (if it actually did not):
+```
+assertThat("Hello", hasLength(2));
+
+java.lang.AssertionError: 
+Expected: a CharSequence with length <4>
+     but: length was <5>
+``` 
+
+Or the same example in AssertJ
+```
+assertThat("Hello").hasSize(2);
+
+java.lang.AssertionError: 
+Expected size:<2> but was:<5> in:
+<"Hello">
+```
 
 ## Using hamcrest
+
+```
+<dependency>
+    <groupId>org.hamcrest</groupId>
+    <artifactId>hamcrest</artifactId>
+    <version>2.2</version>
+    <scope>test</scope>
+</dependency>
+```          
+Note: junit 4 has a transitive dependency to hamcrest 1.1. One can usually add a dependency to hamcrest-all:1.3 to 
+get more matchers. 
+
+Working with hamcrest can at times be difficult because it relies so heavily on static imports. It is difficult
+or even impossible for an ide to help. You will have to look up which matcher you want to use and then let the
+ide figure out the dependency. To make things worse there are usually more than one possible static methods 
+to choose from. I always try the CoreMatchers method first if it appears in the list.
+
 
 ## Writing a hamcrest matcher
 
@@ -69,6 +103,15 @@ A matcher does two things:
 - actually matching a value (say whether the value matches)
 - describe what went wrong when a value does not match
 
+Write your own matcher if 
+- many tests use the same complex matcher code (your own matcher can reduce duplication)
+- a custom matcher with a good name can make a test more readable
+
+## Problematic aspects of the matchers
+
+- ide compare editor can not be used 
+- sometimes messages are difficult to read
+- import issues in hamcrest (missing ide support)
 
 ## Kinds of matches - different libraries
 
