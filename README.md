@@ -54,18 +54,18 @@ Examples of matchers (from hamcrest.org):
 - `equalTo`  -- uses the equals method, eg `assertThat(aString, equalTo("hello"))` 
 - `instanceOf`, eg. `assertThat(aString, is(instanceOf(String.class)))`  (`is` is just syntactic sugar)
 - `greaterThan`, eg. `assertThat(aNumber, is(greaterThan(9.5)))`
-- `hasItem` -- checks whether a collection contains a specific item, eg `assertThat(listOfStrings, hasItem("tiger))` 
+- `hasItem` -- checks whether a collection contains a specific item, eg `assertThat(listOfStrings, hasItem("tiger"))` 
 
 The really cool thing about matchers is that they are composable:
-- `allOf` -- makes a logical and of two matchers, eg `assertThat(aSring, allOf(startsWith("<"), endsWith(">")))`
+- `allOf` -- makes a logical _and_ of two matchers, eg `assertThat(aSring, allOf(startsWith("<"), endsWith(">")))`
 - `hasItem` again -- the item to be found can be a matcher itself, eg `assertThat(listOfStrings, hasItem(hasLength(11)))` 
 
-Matchers can describe what they expect to match and why the given input didn't match (if it actually did not):
+Matchers can describe what they expect to match and why the given input didn't match (if it didn't):
 ```
 assertThat("Hello", hasLength(2));
 
 java.lang.AssertionError: 
-Expected: a CharSequence with length <4>
+Expected: a CharSequence with length <2>
      but: length was <5>
 ``` 
 
@@ -88,7 +88,7 @@ Expected size:<2> but was:<5> in:
     <scope>test</scope>
 </dependency>
 ```          
-Note: junit 4 has a transitive dependency to hamcrest 1.1. One can usually add a dependency to hamcrest-all:1.3 to 
+Note: junit 4 has a transitive dependency to hamcrest-core 1.3. One can usually add a dependency to hamcrest-all:1.3 to 
 get more matchers. 
 
 Working with hamcrest can at times be difficult because it relies so heavily on static imports. It is difficult
@@ -107,11 +107,52 @@ Write your own matcher if
 - many tests use the same complex matcher code (your own matcher can reduce duplication)
 - a custom matcher with a good name can make a test more readable
 
+Example: [MessageMatcher](src/test/java/ch/kup/messages/hamcrest/MessageMatcher.java)
+with usage in [MessageTest](src/test/java/ch/kup/messages/hamcrest/MessageTest.java)
+
+The matcher describes itself like this:
+```
+assertThat(new Message(Severity.ERROR, "bla"), messageWithSeverity(Severity.WARN));
+
+java.lang.AssertionError: 
+Expected: message with severity is <WARN> and text an instance of java.lang.String
+     but: was <Message{severity=ERROR, text='bla'}>
+Expected :message with severity is <WARN> and text an instance of java.lang.String
+Actual   :<Message{severity=ERROR, text='bla'}>
+```
+
+One can improve the description of a mismatch to help the user.
+
+
 ## Problematic aspects of the matchers
 
-- ide compare editor can not be used 
-- sometimes messages are difficult to read
-- import issues in hamcrest (missing ide support)
+### ide compare editor cannot be used
+
+Example in intellij: 
+```
+java.lang.AssertionError: 
+Expected: message with severity is <WARN> and text an instance of java.lang.String
+     but: was <Message{severity=ERROR, text='bla'}>
+Expected :message with severity is <WARN> and text an instance of java.lang.String
+Actual   :<Message{severity=ERROR, text='bla'}>
+<Click to see difference>
+```
+The link "click to see difference" opens the intellij text compare window with the two texts: 
+```
+message with severity is <WARN> and text an instance of java.lang.String
+<Message{severity=ERROR, text='bla'}>  
+```
+which doesn't help at all.
+
+ 
+### sometimes messages are difficult to read
+
+TODO
+
+### import issues in hamcrest (missing ide support)
+
+(Alredy discussed above)
+
 
 ## Kinds of matches - different libraries
 
