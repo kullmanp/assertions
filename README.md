@@ -1,5 +1,5 @@
 # Assertions 
-Open X-Day presentation on assertions and the libraries assertJ and hamcrest in particular.
+Open X-Day presentation on assertions and the libraries AssertJ and hamcrest in particular.
 
 ## Intro
 
@@ -20,8 +20,8 @@ contacts = contactService.getContacts();
 assertNotNull(contacts);
 assertEquals(4, contacts.size());
 mm = contacts.get(2);
-assertEquals("Muster", mm.getName());
-assertEquals("Maria", mm.getFirstName());
+assertEquals(mm.getName(), "Muster");
+assertEquals(mm.getFirstName(), "Maria");
 ```                                      
 
 The example shows many problems
@@ -93,7 +93,7 @@ get more matchers.
 
 Working with hamcrest can at times be difficult because it relies so heavily on static imports. It is difficult
 or even impossible for an ide to help. You will have to look up which matcher you want to use and then let the
-ide figure out the dependency. To make things worse there are usually more than one possible static methods 
+ide figure out the import statement. To make things worse there are usually more than one possible static methods 
 to choose from. I always try the CoreMatchers method first if it appears in the list.
 
 
@@ -135,14 +135,13 @@ One could also improve the description of a mismatch to help the user (eg `descr
 ```
 
 The cool thing about AssertJ is that it chains all calls and therefore allows the ide to help. 
-For example AssertJ asserts work like this: `assertThat(something).isXY...` whereas with hamcrest
+AssertJ asserts work like this: `assertThat(something).isXY...` whereas with hamcrest
 you write `assertThat(something, isXY...)`. You see the difference? The ide knows the type of 
 something and offers exactly these matchers that operate on types compatible with something. 
 
 AssertJ uses specific asserts for a large number of types. With filtering and extracting operations
 it can transform the actual object under test and then finally use simpler assertions on the results. The example
-with the custom matcher in hamcrest could be written in AssertJ like this,  
-[MessageTest](src/test/java/ch/kup/messages/assertj/MessageTest.java).
+with the custom matcher in hamcrest could be written in AssertJ like this: [MessageTest](src/test/java/ch/kup/messages/assertj/MessageTest.java).
 
 With AssertJ you could write (or generate) custom assertions for your classes, eg for the Message class 
 you could have a MessageAssert class:
@@ -153,7 +152,7 @@ assertThat(message).hasSeverity(WARN).hasText("Some error message");
 See <https://github.com/assertj/assertj-assertions-generator>. 
 
 
-## Problematic aspects of the matchers
+## Problematic aspects of the assertion libraries
 
 ### ide compare editor cannot be used
 
@@ -212,7 +211,7 @@ the text attribute.
 
 ### Interop between matcher libraries
 - AssertJ can use hamcrest matcher with `matching(<hamcrest-matcher>)`
-- Mockito supports hamcrest matchers as argument matchers with `argThat(<hamcres-matcher>)`
+- Mockito supports hamcrest matchers as argument matchers with `argThat(<hamcrest-matcher>)`
 - Junit 4 supports hamcrest directly (shipped with junit), can use AssertJ additionally
 - Junit 5 supports nothing directly. Both hamcrest and AssertJ are suitable.
  
