@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.*;
 public class MessageTest {
 
     @Test
-    void matchertest() {
+    void test() {
         var messages = Arrays.asList(
                 new Message(Severity.INFO, "All ok"),
                 new Message(Severity.ERROR, "A problem")

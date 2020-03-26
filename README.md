@@ -47,7 +47,7 @@ Assertion libraries (eg. hamcrest or AssertJ) provide a rich set of assertions t
 the test code more readable and provide better error messages. They are a substitute for the 
 "built-in" assertions like assertTrue, assertEquals, ...
 
-The general idea of the assertion libraries is that of a _matcher_. When we want to verify 
+The general idea of hamcrest is that of a _matcher_. When we want to verify 
 something about the system we can get an object and test whether it matches some matcher. 
 
 Examples of matchers (from hamcrest.org):
@@ -121,7 +121,36 @@ Expected :message with severity is <WARN> and text an instance of java.lang.Stri
 Actual   :<Message{severity=ERROR, text='bla'}>
 ```
 
-One can improve the description of a mismatch to help the user.
+One could also improve the description of a mismatch to help the user (eg `describeMismatchSafely`).
+
+## Using AssertJ
+
+```
+<dependency>
+    <groupId>org.assertj</groupId>
+    <artifactId>assertj-core</artifactId>
+    <version>3.15.0</version>
+    <scope>test</scope>
+</dependency>
+```
+
+The cool thing about AssertJ is that it chains all calls and therefore allows the ide to help. 
+For example AssertJ asserts work like this: `assertThat(something).isXY...` whereas with hamcrest
+you write `assertThat(something, isXY...)`. You see the difference? The ide knows the type of 
+something and offers exactly these matchers that operate on types compatible with something. 
+
+AssertJ uses specific asserts for a large number of types. With filtering and extracting operations
+it can transform the actual object under test and then finally use simpler assertions on the results. The example
+with the custom matcher in hamcrest could be written in AssertJ like this,  
+[MessageTest](src/test/java/ch/kup/messages/assertj/MessageTest.java).
+
+With AssertJ you could write (or generate) custom assertions for your classes, eg for the Message class 
+you could have a MessageAssert class:
+
+```
+assertThat(message).hasSeverity(WARN).hasText("Some error message");
+```
+See <https://github.com/assertj/assertj-assertions-generator>. 
 
 
 ## Problematic aspects of the matchers
@@ -147,7 +176,28 @@ which doesn't help at all.
  
 ### sometimes messages are difficult to read
 
-TODO
+Example in AssertJ:
+
+```
+assertThat(List.of(
+        new Message(Severity.INFO, "aaa"),
+        new Message(Severity.WARN, "bbb"),
+        new Message(Severity.ERROR, "ccc"),
+        new Message(Severity.INFO, "ddd")
+)).extracting("text").contains("error message");
+
+java.lang.AssertionError: [Extracted: text] 
+Expecting:
+ <["eee", "rrr", "aaa", "555"]>
+to contain:
+ <["Hallo"]>
+but could not find:
+ <["Hallo"]>
+```
+
+If the list is really long it is difficult to find subtle differences. Also does the message give no clue
+as to where the texts come from. It would be much better if we had a list of actual messages instead of just
+the text attribute.
 
 ### import issues in hamcrest (missing ide support)
 
